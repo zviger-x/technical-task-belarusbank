@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="../Shared/Shared/Shared.csproj" />
   <Project Path="Users.API/Users.API.csproj" Id="52a51fd1-6c84-4471-b1ce-284550210d87" />
   <Project Path="Users.Application/Users.Application.csproj" Id="03ae8aca-5dec-48da-98ee-6dc87e213398" />
   <Project Path="Users.Domain/Users.Domain.csproj" Id="89ac5237-9eaf-4d68-a9d9-50ff34c624a7" />
