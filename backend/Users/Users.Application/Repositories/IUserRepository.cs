@@ -15,5 +15,13 @@ namespace Users.Application.Repositories
         /// The task result contains <see langword="true"/> if the user is blocked; otherwise, <see langword="false"/>.
         /// </returns>
         Task<bool> IsUserBlockedAsync(string email, CancellationToken token = default);
+
+        /// <summary>
+        /// Checks if an email is in a collection
+        /// </summary>
+        /// <param name="email">Email to check</param>
+        /// <param name="token">Cancellation token to cancel the operation if needed.</param>
+        /// <returns>Returns true if contained</returns>
+        Task<bool> ContainsEmailAsync(string email, CancellationToken token = default);
     }
 }

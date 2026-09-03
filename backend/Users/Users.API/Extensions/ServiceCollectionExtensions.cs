@@ -1,7 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Shared.Repositories;
+using System.Reflection;
 using Users.API.Configuration;
 using Users.Application.Repositories;
+using Users.Application.Services;
+using Users.Application.Services.Interfaces;
 using Users.Domain;
 using Users.Infrastructure.Contexts;
 using Users.Infrastructure.Repositories;
@@ -19,6 +22,16 @@ namespace Users.API.Extensions
         {
             services.AddScoped<IRepository<User>, UserRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+        }
+
+        public static void AddServices(this IServiceCollection services)
+        {
+            services.AddScoped<IPasswordHashingService, PasswordHashingService>();
+        }
+
+        public static void AddUseCases(this IServiceCollection services)
+        {
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.Load("Users.Application")));
         }
     }
 }

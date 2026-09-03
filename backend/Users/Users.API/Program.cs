@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using Scalar.AspNetCore;
 using Shared.Extensions;
+using System.Reflection;
 using Users.API.Configuration;
 using Users.API.Extensions;
 using Users.Application.UnitOfWork;
@@ -30,6 +32,11 @@ namespace Users.API
             services.AddRepositories();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+            // Application
+            services.AddAutoMapper(_ => { }, Assembly.Load("Users.Application"));
+            services.AddServices();
+            services.AddUseCases();
+
             // API
             services.AddControllers();
             services.AddOpenApi();
@@ -50,6 +57,7 @@ namespace Users.API
             if (app.Environment.IsDevelopment())
             {
                 app.MapOpenApi();
+                app.MapScalarApiReference();
             }
 
             // app.UseAuthentication();

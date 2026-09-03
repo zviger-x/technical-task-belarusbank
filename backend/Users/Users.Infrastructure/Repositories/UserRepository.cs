@@ -1,4 +1,4 @@
-﻿using System.Data.Entity;
+﻿using Microsoft.EntityFrameworkCore;
 using Users.Application.Repositories;
 using Users.Domain;
 using Users.Infrastructure.Contexts;
@@ -18,6 +18,11 @@ namespace Users.Infrastructure.Repositories
                 .Where(x => x.Email == email)
                 .Select(x => x.IsBlocked)
                 .FirstOrDefaultAsync(token);
+        }
+
+        public async Task<bool> ContainsEmailAsync(string email, CancellationToken token = default)
+        {
+            return await _context.Users.AnyAsync(u => u.Email == email, token);
         }
     }
 }

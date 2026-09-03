@@ -1,0 +1,34 @@
+services:
+  users.api:
+    container_name: Users.API
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+    ports:
+      - "8080:8080"
+    depends_on:
+      - sqlserver
+    restart: always
+    networks:
+      - internal-docker-network
+
+  sqlserver:
+    container_name: Users.SQLServer
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=SA_passw0rd
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql_data:/var/opt/mssql
+    restart: always
+    networks:
+      - internal-docker-network
+
+networks:
+  internal-docker-network:
+    driver: bridge
+
+volumes:
+  sql_data:
