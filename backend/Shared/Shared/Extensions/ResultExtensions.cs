@@ -7,31 +7,19 @@ namespace Shared.Extensions
 {
     public static class ResultExtensions
     {
-        public static IActionResult ToHttpResult(this Result result)
-        {
-            var body = GetOutputBody(result);
+        public static IActionResult ToHttpResult(this Result result) => ToHttpResult(result, GetOutputBody(result));
 
+        public static IActionResult ToHttpResult<T>(this Result<T> result) => ToHttpResult(result, GetOutputBody(result));
+
+        private static IActionResult ToHttpResult(Result result, object body)
+        {
             if (result.IsSuccess)
                 return new OkObjectResult(body);
 
-            return result.Error switch
+            return result.Errors[0] switch
             {
                 ConflictError => new ConflictObjectResult(body),
-
-                _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
-            };
-        }
-
-        public static IActionResult ToHttpResult<T>(this Result<T> result)
-        {
-            var body = GetOutputBody(result);
-
-            if (result.IsSuccess)
-                return new OkObjectResult(body);
-
-            return result.Error switch
-            {
-                ConflictError => new ConflictObjectResult(body),
+                ValidationError => new BadRequestObjectResult(body),
 
                 _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
             };
@@ -42,7 +30,7 @@ namespace Shared.Extensions
             return new
             {
                 data = (object)null,
-                error = result.Error?.Message
+                errors = result.Errors
             };
         }
 
@@ -51,7 +39,7 @@ namespace Shared.Extensions
             return new
             {
                 data = result.IsSuccess ? result.Data : (object)null,
-                error = result.Error?.Message
+                errors = result.Errors
             };
         }
     }

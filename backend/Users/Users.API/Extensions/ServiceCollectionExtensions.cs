@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Shared.Repositories;
 using System.Reflection;
 using Users.API.Configuration;
@@ -22,6 +23,11 @@ namespace Users.API.Extensions
         {
             services.AddScoped<IRepository<User>, UserRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+        }
+
+        public static void AddValidators(this IServiceCollection services)
+        {
+            services.AddValidatorsFromAssembly(Assembly.Load("Users.Application"));
         }
 
         public static void AddServices(this IServiceCollection services)

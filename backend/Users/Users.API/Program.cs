@@ -34,6 +34,7 @@ namespace Users.API
 
             // Application
             services.AddAutoMapper(_ => { }, Assembly.Load("Users.Application"));
+            services.AddValidators();
             services.AddServices();
             services.AddUseCases();
 
