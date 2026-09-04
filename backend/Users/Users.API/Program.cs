@@ -1,18 +1,17 @@
-using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Shared.Extensions;
 using System.Reflection;
 using Users.API.Configuration;
 using Users.API.Extensions;
 using Users.Application.UnitOfWork;
-using Users.Infrastructure.Contexts;
+using Users.Infrastructure.Initialization;
 using Users.Infrastructure.UnitOfWork;
 
 namespace Users.API
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +30,7 @@ namespace Users.API
             services.AddUserDbContext(sqlConfig);
             services.AddRepositories();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<DatabaseInitializer>();
 
             // Application
             services.AddAutoMapper(_ => { }, Assembly.Load("Users.Application"));
@@ -47,11 +47,9 @@ namespace Users.API
             // Initializing DB
             using (var scope = app.Services.CreateScope())
             {
-                var dbContext = scope.ServiceProvider.GetRequiredService<UserDbContext>();
-
-                // Auto migrations
-                if (dbContext.Database.GetPendingMigrations().Any())
-                    dbContext.Database.Migrate();
+                await scope.ServiceProvider
+                    .GetRequiredService<DatabaseInitializer>()
+                    .InitializeAsync();
             }
 
             // Configure the HTTP request pipeline.
