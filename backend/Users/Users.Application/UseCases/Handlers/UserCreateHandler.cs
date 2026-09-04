@@ -4,7 +4,6 @@ using MediatR;
 using Shared.Common.Results;
 using Shared.Extensions;
 using Users.Application.Common.Errors;
-using Users.Application.Contracts;
 using Users.Application.Services.Interfaces;
 using Users.Application.UnitOfWork;
 using Users.Application.UseCases.Commands;
@@ -49,115 +48,6 @@ namespace Users.Application.UseCases.Handlers
         private async Task<bool> IsUniqueEmail(string email, CancellationToken token = default)
         {
             return !await _unitOfWork.UserRepository.ContainsEmailAsync(email, token);
-        }
-    }
-
-    public class UserDeleteHandler : BaseHandler, IRequestHandler<UserDeleteCommand, Result>
-    {
-        public UserDeleteHandler(IUnitOfWork unitOfWork, IMapper mapper)
-            : base(unitOfWork, mapper)
-        {
-        }
-
-        public async Task<Result> Handle(UserDeleteCommand request, CancellationToken cancellationToken)
-        {
-            var entity = await _unitOfWork.UserRepository.GetByIdAsync(request.UserId, cancellationToken);
-            if (entity == null)
-                return Result.Failure(UserErrors.UserToDeleteNotFound);
-
-            await _unitOfWork.UserRepository.DeleteAsync(entity, cancellationToken);
-
-            return Result.Success();
-        }
-    }
-
-    public class UserChangeBlockHandler : BaseHandler, IRequestHandler<UserChangeBlockCommand, Result>
-    {
-        public UserChangeBlockHandler(IUnitOfWork unitOfWork, IMapper mapper)
-            : base(unitOfWork, mapper)
-        {
-        }
-
-        public async Task<Result> Handle(UserChangeBlockCommand request, CancellationToken cancellationToken)
-        {
-            var entity = await _unitOfWork.UserRepository.GetByIdAsync(request.UserId, cancellationToken);
-            if (entity == null)
-                return Result.Failure(UserErrors.UserNotFound);
-
-            entity.IsBlocked = request.IsBlocked;
-
-            await _unitOfWork.UserRepository.UpdateAsync(entity, cancellationToken);
-
-            return Result.Success();
-        }
-    }
-
-    public class UserChangeRoleHandler : BaseHandler, IRequestHandler<UserChangeRoleCommand, Result>
-    {
-        public UserChangeRoleHandler(IUnitOfWork unitOfWork, IMapper mapper)
-            : base(unitOfWork, mapper)
-        {
-        }
-
-        public async Task<Result> Handle(UserChangeRoleCommand request, CancellationToken cancellationToken)
-        {
-            var entity = await _unitOfWork.UserRepository.GetByIdAsync(request.UserId, cancellationToken);
-            if (entity == null)
-                return Result.Failure(UserErrors.UserNotFound);
-
-            entity.Role = request.UserRole;
-
-            await _unitOfWork.UserRepository.UpdateAsync(entity, cancellationToken);
-
-            return Result.Success();
-        }
-    }
-
-    public class UserChangePasswordHandler : BaseHandler, IRequestHandler<UserChangePasswordCommand, Result>
-    {
-        private readonly IValidator<UserChangePasswordCommand> _validator;
-        private readonly IPasswordHashingService _passwordHashingService;
-
-        public UserChangePasswordHandler(
-            IUnitOfWork unitOfWork,
-            IMapper mapper,
-            IValidator<UserChangePasswordCommand> validator,
-            IPasswordHashingService passwordHashingService)
-            : base(unitOfWork, mapper)
-        {
-            _validator = validator;
-            _passwordHashingService = passwordHashingService;
-        }
-
-        public async Task<Result> Handle(UserChangePasswordCommand request, CancellationToken cancellationToken)
-        {
-            var validationResult = await _validator.ValidateAsync(request, cancellationToken);
-
-            if (!validationResult.IsValid)
-                return Result.Failure(validationResult.ToErrors());
-
-            var user = await _unitOfWork.UserRepository.GetByIdAsync(request.UserId, cancellationToken);
-            if (user == null)
-                return Result.Failure(UserErrors.UserNotFound);
-
-            if (!IsCurrentPassword(user, request.UserPasswordDto, cancellationToken))
-                return Result.Failure(UserErrors.InvalidCurrentPassword);
-
-            user.PasswordHash = _passwordHashingService.HashPassword(request.UserPasswordDto.NewPassword);
-
-            await _unitOfWork.UserRepository.UpdateAsync(user, cancellationToken);
-
-            return Result.Success();
-        }
-
-        private bool IsCurrentPassword(User storedUser, ChangeUserPasswordDto changePasswordDto, CancellationToken token = default)
-        {
-            if (storedUser == null)
-                return false;
-
-            var isPasswordValid = _passwordHashingService.VerifyPassword(changePasswordDto.CurrentPassword, storedUser.PasswordHash);
-
-            return isPasswordValid;
         }
     }
 }
