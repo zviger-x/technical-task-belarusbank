@@ -25,7 +25,7 @@ namespace Users.Infrastructure.Initialization
         {
             await _context.Database.MigrateAsync(cancellationToken);
 
-            var adminExists = await _context.Users.AnyAsync(x => x.Email == AdminEmail, cancellationToken);
+            var adminExists = await _context.Users.AnyAsync(x => x.Email == EF.Parameter(AdminEmail), cancellationToken);
 
             if (adminExists)
                 return;

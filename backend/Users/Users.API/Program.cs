@@ -20,6 +20,10 @@ namespace Users.API
             var configuration = builder.Configuration;
             var logging = builder.Logging;
 
+            // Add logging
+            logging.ConfigureLogger(
+                microserviceName: Assembly.GetExecutingAssembly().GetName().Name);
+
             // Add configs
             configuration.SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false)
