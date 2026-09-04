@@ -20,6 +20,7 @@ namespace Shared.Extensions
             {
                 ConflictError => new ConflictObjectResult(body),
                 ValidationError => new BadRequestObjectResult(body),
+                NotFoundError => new NotFoundObjectResult(body),
 
                 _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
             };

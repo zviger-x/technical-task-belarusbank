@@ -21,7 +21,8 @@ namespace Users.Application.Validation.Validators.Contracts
                 .NotEmpty();
 
             RuleFor(u => u.ConfirmPassword)
-                .Equal(u => u.Password);
+                .Equal(u => u.Password)
+                .WithMessage("The passwords must match.");
         }
     }
 }

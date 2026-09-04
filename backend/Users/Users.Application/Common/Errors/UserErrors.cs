@@ -8,5 +8,20 @@ namespace Users.Application.Common.Errors
             new ConflictError(
                 "User.EmailAlreadyExists",
                 "A user with this email already exists.");
+
+        public static readonly Error UserToDeleteNotFound =
+            new NotFoundError(
+                "User.Delete.NotFound",
+                "User is already deleted or not found.");
+
+        public static readonly Error UserNotFound =
+            new NotFoundError(
+                "User.NotFound",
+                "User not found.");
+
+        public static readonly Error InvalidCurrentPassword =
+            new ValidationError(
+                "User.InvalidCurrentPassword",
+                "The current password is incorrect.");
     }
 }
