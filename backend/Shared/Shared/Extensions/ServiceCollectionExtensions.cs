@@ -1,5 +1,12 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
+using Shared.Configuration;
+using System.Text;
 
 namespace Shared.Extensions
 {
@@ -31,6 +38,78 @@ namespace Shared.Extensions
 
             services.Configure<TConfig>(section);
             return config;
+        }
+
+        /// <summary>
+        /// Adds JWT Bearer authentication using the specified token configuration.
+        /// </summary>
+        /// <param name="services">The service collection to register authentication services with.</param>
+        /// <param name="config">The JWT token configuration containing issuer, audience, and secret key.</param>
+        public static AuthenticationBuilder AddJwtAuthentication(this IServiceCollection services, JwtTokenConfig config)
+        {
+            return services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = config.Issuer,
+                        ValidAudience = config.Audience,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config.SecretKey)),
+                        ClockSkew = TimeSpan.Zero
+                    };
+                });
+        }
+
+        /// <summary>
+        /// Configures OpenAPI documentation with JWT Bearer authentication support for Scalar.
+        /// </summary>
+        public static void AddScalar(this IServiceCollection services)
+        {
+            services.AddOpenApi(options =>
+            {
+                options.AddDocumentTransformer((document, _, _) =>
+                {
+                    document.Components ??= new OpenApiComponents();
+
+                    document.Components.SecuritySchemes ??=
+                        new Dictionary<string, IOpenApiSecurityScheme>();
+
+                    document.Components.SecuritySchemes["Bearer"] =
+                        new OpenApiSecurityScheme
+                        {
+                            Type = SecuritySchemeType.Http,
+                            Scheme = "bearer",
+                            BearerFormat = "JWT"
+                        };
+
+                    return Task.CompletedTask;
+                });
+
+                options.AddOperationTransformer((operation, context, _) =>
+                {
+                    var metadata = context.Description.ActionDescriptor.EndpointMetadata;
+
+                    if (metadata.OfType<AllowAnonymousAttribute>().Any())
+                        return Task.CompletedTask;
+
+                    if (metadata.OfType<AuthorizeAttribute>().Any())
+                    {
+                        operation.Security =
+                        [
+                            new OpenApiSecurityRequirement
+                            {
+                                [new OpenApiSecuritySchemeReference("Bearer")] = []
+                            }
+                        ];
+                    }
+
+                    return Task.CompletedTask;
+                });
+            });
         }
     }
 }

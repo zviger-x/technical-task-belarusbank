@@ -23,6 +23,9 @@ namespace Users.API.Extensions
         {
             services.AddScoped<IRepository<User>, UserRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+
+            services.AddScoped<IRepository<RefreshToken>, RefreshTokenRepository>();
+            services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         }
 
         public static void AddValidators(this IServiceCollection services)
@@ -33,6 +36,7 @@ namespace Users.API.Extensions
         public static void AddServices(this IServiceCollection services)
         {
             services.AddScoped<IPasswordHashingService, PasswordHashingService>();
+            services.AddScoped<ITokenService, TokenService>();
         }
 
         public static void AddUseCases(this IServiceCollection services)

@@ -23,5 +23,13 @@ namespace Users.Application.Repositories
         /// <param name="token">Cancellation token to cancel the operation if needed.</param>
         /// <returns>Returns true if contained</returns>
         Task<bool> ContainsEmailAsync(string email, CancellationToken token = default);
+
+        /// <summary>
+        /// Returns the user by his email.
+        /// </summary>
+        /// <param name="email">User email.</param>
+        /// <param name="token">Cancellation token to cancel the operation if needed.</param>
+        /// <returns>User.</returns>
+        Task<User> GetByEmailAsync(string email, CancellationToken token = default);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Enums;
 using Shared.Extensions;
@@ -18,8 +19,8 @@ namespace Users.API.Controllers
             _mediator = mediator;
         }
 
+        [Authorize(Roles = nameof(UserRoles.Admin))]
         [HttpPost]
-        // [Authorize(Roles = nameof(UserRoles.Admin))]
         public async Task<IActionResult> CreateAsync([FromBody] CreateUserDto userToCreate, CancellationToken cancellationToken)
         {
             var command = new UserCreateCommand(userToCreate);
@@ -29,6 +30,7 @@ namespace Users.API.Controllers
             return result.ToHttpResult();
         }
 
+        [Authorize(Roles = nameof(UserRoles.Admin))]
         [HttpPatch("{userId}/role")]
         public async Task<IActionResult> ChangeRole([FromRoute] Guid userId, [FromBody] UserRoles userRole, CancellationToken cancellationToken)
         {
@@ -39,6 +41,8 @@ namespace Users.API.Controllers
             return result.ToHttpResult();
         }
 
+        // TODO: User must change password (admin bypass allowed)
+        [Authorize]
         [HttpPatch("{userId}/password")]
         public async Task<IActionResult> ChangePassword([FromRoute] Guid userId, [FromBody] ChangeUserPasswordDto changeUserPasswordDto, CancellationToken cancellationToken)
         {
@@ -49,6 +53,7 @@ namespace Users.API.Controllers
             return result.ToHttpResult();
         }
 
+        [Authorize(Roles = nameof(UserRoles.Admin))]
         [HttpPatch("{userId}/block")]
         public async Task<IActionResult> ChangeUserBlock([FromRoute] Guid userId, [FromBody] bool isBlocked, CancellationToken cancellationToken)
         {
@@ -59,6 +64,7 @@ namespace Users.API.Controllers
             return result.ToHttpResult();
         }
 
+        [Authorize(Roles = nameof(UserRoles.Admin))]
         [HttpDelete("{userId}")]
         public async Task<IActionResult> DeleteUser([FromRoute] Guid userId, CancellationToken cancellationToken)
         {

@@ -6,5 +6,6 @@ namespace Users.Application.UnitOfWork
     public interface IUnitOfWork : IBaseUnitOfWork
     {
         IUserRepository UserRepository { get; }
+        IRefreshTokenRepository RefreshTokenRepository { get; }
     }
 }

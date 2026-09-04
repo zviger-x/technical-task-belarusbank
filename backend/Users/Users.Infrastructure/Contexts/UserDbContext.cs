@@ -6,6 +6,7 @@ namespace Users.Infrastructure.Contexts
     public class UserDbContext : DbContext
     {
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<RefreshToken> RefreshTokens { get; set; }
 
         public UserDbContext(DbContextOptions<UserDbContext> options)
             : base(options)

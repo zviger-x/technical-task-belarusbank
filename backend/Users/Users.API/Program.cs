@@ -1,4 +1,5 @@
 using Scalar.AspNetCore;
+using Shared.Configuration;
 using Shared.Extensions;
 using System.Reflection;
 using Users.API.Configuration;
@@ -29,6 +30,7 @@ namespace Users.API
                 .AddJsonFile("appsettings.json", optional: false)
                 .AddEnvironmentVariables();
             var sqlConfig = services.ConfigureAndReceive<SqlServerConfig>(configuration, "SqlServerConfig");
+            var jwtConfig = services.ConfigureAndReceive<JwtTokenConfig>(configuration, "Jwt");
 
             // Infrastructure
             services.AddUserDbContext(sqlConfig);
@@ -42,11 +44,17 @@ namespace Users.API
             services.AddServices();
             services.AddUseCases();
 
+            // JWT
+            services.AddJwtAuthentication(jwtConfig);
+            services.AddAuthorization();
+
             // API
             services.AddControllers();
-            services.AddOpenApi();
+            services.AddScalar();
 
             var app = builder.Build();
+
+            // TODO: Add exception handling middleware
 
             // Initializing DB
             using (var scope = app.Services.CreateScope())
@@ -60,10 +68,15 @@ namespace Users.API
             if (app.Environment.IsDevelopment())
             {
                 app.MapOpenApi();
-                app.MapScalarApiReference();
+                app.MapScalarApiReference(options =>
+                {
+                    options
+                        .AddPreferredSecuritySchemes("Bearer")
+                        .EnablePersistentAuthentication();
+                });
             }
 
-            // app.UseAuthentication();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllers();
