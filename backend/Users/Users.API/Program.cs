@@ -1,6 +1,7 @@
 using Scalar.AspNetCore;
 using Shared.Configuration;
 using Shared.Extensions;
+using Shared.Middlewares;
 using System.Reflection;
 using Users.API.Configuration;
 using Users.API.Extensions;
@@ -54,7 +55,8 @@ namespace Users.API
 
             var app = builder.Build();
 
-            // TODO: Add exception handling middleware
+            // Middlewares
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
 
             // Initializing DB
             using (var scope = app.Services.CreateScope())
