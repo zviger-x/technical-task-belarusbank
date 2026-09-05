@@ -21,12 +21,14 @@ namespace Shared.Extensions
                 ConflictError => new ConflictObjectResult(body),
                 ValidationError => new BadRequestObjectResult(body),
                 NotFoundError => new NotFoundObjectResult(body),
+                ForbiddenError => new ObjectResult(body) { StatusCode = StatusCodes.Status403Forbidden },
+                InternalError => new ObjectResult(body) { StatusCode = StatusCodes.Status500InternalServerError },
 
                 _ => new StatusCodeResult(StatusCodes.Status500InternalServerError)
             };
         }
 
-        private static object GetOutputBody(Result result)
+        public static object GetOutputBody(Result result)
         {
             return new
             {
@@ -35,7 +37,7 @@ namespace Shared.Extensions
             };
         }
 
-        private static object GetOutputBody<T>(Result<T> result)
+        public static object GetOutputBody<T>(Result<T> result)
         {
             return new
             {

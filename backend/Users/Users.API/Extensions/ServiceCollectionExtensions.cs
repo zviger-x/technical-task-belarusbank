@@ -31,6 +31,7 @@ namespace Users.API.Extensions
         public static void AddValidators(this IServiceCollection services)
         {
             services.AddValidatorsFromAssembly(Assembly.Load("Users.Application"));
+            services.AddValidatorsFromAssembly(Assembly.Load("Shared"));
         }
 
         public static void AddServices(this IServiceCollection services)

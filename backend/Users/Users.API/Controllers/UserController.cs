@@ -1,10 +1,12 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Common;
 using Shared.Enums;
 using Shared.Extensions;
 using Users.Application.Contracts;
 using Users.Application.UseCases.Commands;
+using Users.Application.UseCases.Queries;
 
 namespace Users.API.Controllers
 {
@@ -12,6 +14,8 @@ namespace Users.API.Controllers
     [Route("api/users")]
     public class UserController : ControllerBase
     {
+        private const int PageSize = 100;
+
         private readonly IMediator _mediator;
 
         public UserController(IMediator mediator)
@@ -41,12 +45,12 @@ namespace Users.API.Controllers
             return result.ToHttpResult();
         }
 
-        // TODO: User must change password (admin bypass allowed)
         [Authorize]
         [HttpPatch("{userId}/password")]
         public async Task<IActionResult> ChangePassword([FromRoute] Guid userId, [FromBody] ChangeUserPasswordDto changeUserPasswordDto, CancellationToken cancellationToken)
         {
-            var command = new UserChangePasswordCommand(userId, changeUserPasswordDto);
+            var userContext = User.GetUserContext();
+            var command = new UserChangePasswordCommand(userId, changeUserPasswordDto, userContext);
 
             var result = await _mediator.Send(command, cancellationToken);
 
@@ -69,6 +73,19 @@ namespace Users.API.Controllers
         public async Task<IActionResult> DeleteUser([FromRoute] Guid userId, CancellationToken cancellationToken)
         {
             var command = new UserDeleteCommand(userId);
+
+            var result = await _mediator.Send(command, cancellationToken);
+
+            return result.ToHttpResult();
+        }
+
+
+        [Authorize(Roles = nameof(UserRoles.Admin))]
+        [HttpGet]
+        public async Task<IActionResult> GetUsersPaged([FromQuery] int pageNumber = 1, CancellationToken cancellationToken = default)
+        {
+            var pageParameters = new PageParameters { PageNumber = pageNumber, PageSize = PageSize };
+            var command = new UserGetPagedQuery(pageParameters);
 
             var result = await _mediator.Send(command, cancellationToken);
 

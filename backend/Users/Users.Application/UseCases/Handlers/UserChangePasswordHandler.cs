@@ -2,6 +2,7 @@
 using FluentValidation;
 using MediatR;
 using Shared.Common.Results;
+using Shared.Enums;
 using Shared.Extensions;
 using Users.Application.Common.Errors;
 using Users.Application.Contracts;
@@ -12,6 +13,7 @@ using Users.Domain;
 
 namespace Users.Application.UseCases.Handlers
 {
+    // TODO: mb reset endpoint?
     public class UserChangePasswordHandler : BaseHandler, IRequestHandler<UserChangePasswordCommand, Result>
     {
         private readonly IValidator<UserChangePasswordCommand> _validator;
@@ -39,7 +41,13 @@ namespace Users.Application.UseCases.Handlers
             if (user == null)
                 return Result.Failure(UserErrors.UserNotFound);
 
-            if (!IsCurrentPassword(user, request.UserPasswordDto, cancellationToken))
+            var isCurrentUser = request.UserContext.Id == user.Id;
+            var isCurrentUserAdmin = request.UserContext.Role == UserRoles.Admin;
+
+            if (!isCurrentUser && !isCurrentUserAdmin)
+                return Result.Failure(UserErrors.InsufficientPermissions);
+
+            if (!isCurrentUserAdmin && !IsCurrentPassword(user, request.UserPasswordDto))
                 return Result.Failure(UserErrors.InvalidCurrentPassword);
 
             user.PasswordHash = _passwordHashingService.HashPassword(request.UserPasswordDto.NewPassword);
@@ -49,7 +57,7 @@ namespace Users.Application.UseCases.Handlers
             return Result.Success();
         }
 
-        private bool IsCurrentPassword(User storedUser, ChangeUserPasswordDto changePasswordDto, CancellationToken token = default)
+        private bool IsCurrentPassword(User storedUser, ChangeUserPasswordDto changePasswordDto)
         {
             if (storedUser == null)
                 return false;

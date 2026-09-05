@@ -17,7 +17,7 @@ namespace Users.Application.UseCases.Handlers
 
         public async Task<Result> Handle(LogoutCommand request, CancellationToken cancellationToken)
         {
-            var refreshToken = await _unitOfWork.RefreshTokenRepository.GetByUserIdAsync(request.UserId, cancellationToken);
+            var refreshToken = await _unitOfWork.RefreshTokenRepository.GetByUserIdAsync(request.UserContext.Id, cancellationToken);
 
             if (refreshToken == null)
                 return Result.Success();

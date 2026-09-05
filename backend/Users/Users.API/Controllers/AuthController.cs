@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Shared.Extensions;
-using System.Security.Claims;
 using Users.Application.Contracts;
 using Users.Application.UseCases.Commands;
 
@@ -33,10 +32,7 @@ namespace Users.API.Controllers
         [HttpPost("logout")]
         public async Task<IActionResult> Logout(CancellationToken cancellationToken)
         {
-            // TODO: fix 
-            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-
-            var command = new LogoutCommand(userId);
+            var command = new LogoutCommand(User.GetUserContext());
 
             var result = await _mediator.Send(command, cancellationToken);
 
