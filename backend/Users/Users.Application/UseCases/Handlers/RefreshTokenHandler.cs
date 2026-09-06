@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
 using Shared.Common.Results;
+using Users.Application.Common;
 using Users.Application.Common.Errors;
 using Users.Application.Contracts;
 using Users.Application.Services.Interfaces;
@@ -12,17 +13,14 @@ namespace Users.Application.UseCases.Handlers
 {
     public class RefreshTokenHandler : BaseHandler, IRequestHandler<RefreshTokenCommand, Result<TokenResponseDto>>
     {
-        private readonly IPasswordHashingService _passwordHashingService;
         private readonly ITokenService _tokenService;
 
         public RefreshTokenHandler(
             IUnitOfWork unitOfWork,
             IMapper mapper,
-            IPasswordHashingService passwordHashingService,
             ITokenService tokenService)
             : base(unitOfWork, mapper)
         {
-            _passwordHashingService = passwordHashingService;
             _tokenService = tokenService;
         }
 
@@ -39,6 +37,15 @@ namespace Users.Application.UseCases.Handlers
             var newRefreshToken = await RegenerateRefreshTokenValueAsync(user.Id, cancellationToken);
             var jwtToken = _tokenService.GenerateJwtToken(user.Id, user.Name, user.Email, user.Role);
 
+            var auditLog = new AuditLog
+            {
+                Action = AuditActions.UserTokenRefreshed,
+                UserId = user.Id
+            };
+            await _unitOfWork.AuditRepository.CreateAsync(auditLog, cancellationToken);
+
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
             return Result.Success(new TokenResponseDto() { AccessToken = jwtToken, RefreshToken = newRefreshToken.Token });
         }
 
@@ -50,7 +57,6 @@ namespace Users.Application.UseCases.Handlers
 
             return new(true, storedToken.UserId);
         }
-
 
         /// <summary>
         /// Regenerates the value of the refresh token while preserving its original expiration time.
@@ -68,7 +74,6 @@ namespace Users.Application.UseCases.Handlers
             oldRefreshToken.Token = newRefreshToken.Token;
 
             await UpsertRefreshTokenAsync(oldRefreshToken, cancellationToken);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return oldRefreshToken;
         }

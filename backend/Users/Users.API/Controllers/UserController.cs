@@ -27,7 +27,7 @@ namespace Users.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] CreateUserDto userToCreate, CancellationToken cancellationToken)
         {
-            var command = new UserCreateCommand(userToCreate);
+            var command = new UserCreateCommand(userToCreate, User.GetUserContext());
 
             var result = await _mediator.Send(command, cancellationToken);
 
@@ -38,7 +38,7 @@ namespace Users.API.Controllers
         [HttpPatch("{userId}/role")]
         public async Task<IActionResult> ChangeRole([FromRoute] Guid userId, [FromBody] UserRoles userRole, CancellationToken cancellationToken)
         {
-            var command = new UserChangeRoleCommand(userId, userRole);
+            var command = new UserChangeRoleCommand(userId, userRole, User.GetUserContext());
 
             var result = await _mediator.Send(command, cancellationToken);
 
@@ -49,8 +49,7 @@ namespace Users.API.Controllers
         [HttpPatch("{userId}/password")]
         public async Task<IActionResult> ChangePassword([FromRoute] Guid userId, [FromBody] ChangeUserPasswordDto changeUserPasswordDto, CancellationToken cancellationToken)
         {
-            var userContext = User.GetUserContext();
-            var command = new UserChangePasswordCommand(userId, changeUserPasswordDto, userContext);
+            var command = new UserChangePasswordCommand(userId, changeUserPasswordDto, User.GetUserContext());
 
             var result = await _mediator.Send(command, cancellationToken);
 
@@ -61,7 +60,7 @@ namespace Users.API.Controllers
         [HttpPatch("{userId}/block")]
         public async Task<IActionResult> ChangeUserBlock([FromRoute] Guid userId, [FromBody] bool isBlocked, CancellationToken cancellationToken)
         {
-            var command = new UserChangeBlockCommand(userId, isBlocked);
+            var command = new UserChangeBlockCommand(userId, isBlocked, User.GetUserContext());
 
             var result = await _mediator.Send(command, cancellationToken);
 
@@ -72,13 +71,12 @@ namespace Users.API.Controllers
         [HttpDelete("{userId}")]
         public async Task<IActionResult> DeleteUser([FromRoute] Guid userId, CancellationToken cancellationToken)
         {
-            var command = new UserDeleteCommand(userId);
+            var command = new UserDeleteCommand(userId, User.GetUserContext());
 
             var result = await _mediator.Send(command, cancellationToken);
 
             return result.ToHttpResult();
         }
-
 
         [Authorize(Roles = nameof(UserRoles.Admin))]
         [HttpGet]

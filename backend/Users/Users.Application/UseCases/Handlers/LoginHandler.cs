@@ -3,6 +3,7 @@ using FluentValidation;
 using MediatR;
 using Shared.Common.Results;
 using Shared.Extensions;
+using Users.Application.Common;
 using Users.Application.Common.Errors;
 using Users.Application.Contracts;
 using Users.Application.Services.Interfaces;
@@ -55,6 +56,14 @@ namespace Users.Application.UseCases.Handlers
             };
 
             await UpsertRefreshTokenAsync(refreshTokenModel, cancellationToken);
+
+            var auditLog = new AuditLog
+            {
+                Action = AuditActions.UserLoggedIn,
+                UserId = user.Id,
+            };
+            await _unitOfWork.AuditRepository.CreateAsync(auditLog, cancellationToken);
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success(new TokenResponseDto() { AccessToken = jwtToken, RefreshToken = refreshToken.Token });

@@ -26,6 +26,9 @@ namespace Users.API.Extensions
 
             services.AddScoped<IRepository<RefreshToken>, RefreshTokenRepository>();
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+
+            services.AddScoped<IRepository<AuditLog>, AuditRepository>();
+            services.AddScoped<IAuditRepository, AuditRepository>();
         }
 
         public static void AddValidators(this IServiceCollection services)

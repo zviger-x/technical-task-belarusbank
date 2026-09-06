@@ -7,5 +7,6 @@ namespace Users.Application.UnitOfWork
     {
         IUserRepository UserRepository { get; }
         IRefreshTokenRepository RefreshTokenRepository { get; }
+        IAuditRepository AuditRepository { get; }
     }
 }

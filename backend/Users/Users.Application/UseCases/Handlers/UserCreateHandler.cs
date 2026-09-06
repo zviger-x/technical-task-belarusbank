@@ -3,6 +3,7 @@ using FluentValidation;
 using MediatR;
 using Shared.Common.Results;
 using Shared.Extensions;
+using Users.Application.Common;
 using Users.Application.Common.Errors;
 using Users.Application.Services.Interfaces;
 using Users.Application.UnitOfWork;
@@ -41,6 +42,15 @@ namespace Users.Application.UseCases.Handlers
             user.PasswordHash = _passwordHashingService.HashPassword(request.User.Password);
 
             await _unitOfWork.UserRepository.CreateAsync(user, cancellationToken);
+
+            var auditLog = new AuditLog
+            {
+                Action = AuditActions.UserCreated,
+                UserId = request.UserContext.Id,
+                EntityId = user.Id,
+            };
+            await _unitOfWork.AuditRepository.CreateAsync(auditLog, cancellationToken);
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success(user.Id);
