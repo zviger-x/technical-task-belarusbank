@@ -1,7 +1,7 @@
-﻿using Shared.Entities;
-using Shared.Repositories;
+﻿using Shared.Abstractions.Repositories;
+using Shared.Entities;
 
-namespace Shared.UnitOfWork
+namespace Shared.Abstractions.UnitOfWork
 {
     public interface IBaseUnitOfWork : IDisposable
     {

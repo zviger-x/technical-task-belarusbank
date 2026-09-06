@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using Shared.Repositories;
+using Shared.Abstractions.Repositories;
 using System.Reflection;
 using Users.API.Configuration;
 using Users.Application.Repositories;

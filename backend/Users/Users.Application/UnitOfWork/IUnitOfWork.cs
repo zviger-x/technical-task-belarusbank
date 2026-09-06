@@ -1,4 +1,4 @@
-﻿using Shared.UnitOfWork;
+﻿using Shared.Abstractions.UnitOfWork;
 using Users.Application.Repositories;
 
 namespace Users.Application.UnitOfWork

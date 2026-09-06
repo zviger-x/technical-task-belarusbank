@@ -1,8 +1,8 @@
 ﻿using EFCore.BulkExtensions;
 using Microsoft.EntityFrameworkCore;
+using Shared.Abstractions.Repositories;
 using Shared.Common;
 using Shared.Entities;
-using Shared.Repositories;
 using Users.Infrastructure.Contexts;
 
 namespace Users.Infrastructure.Repositories

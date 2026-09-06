@@ -1,7 +1,7 @@
 ﻿using Shared.Common;
 using Shared.Entities;
 
-namespace Shared.Repositories
+namespace Shared.Abstractions.Repositories
 {
     public interface IRepository<T> : IDisposable
         where T : class, IEntity

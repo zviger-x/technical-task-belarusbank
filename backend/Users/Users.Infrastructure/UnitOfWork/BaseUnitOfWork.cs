@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
+using Shared.Abstractions.Repositories;
+using Shared.Abstractions.UnitOfWork;
 using Shared.Entities;
-using Shared.Repositories;
-using Shared.UnitOfWork;
 using Users.Infrastructure.Contexts;
 
 namespace Users.Infrastructure.UnitOfWork

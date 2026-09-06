@@ -1,4 +1,4 @@
-﻿using Shared.Repositories;
+﻿using Shared.Abstractions.Repositories;
 using Users.Domain;
 
 namespace Users.Application.Repositories
