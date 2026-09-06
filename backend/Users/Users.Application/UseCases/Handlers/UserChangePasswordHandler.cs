@@ -51,6 +51,7 @@ namespace Users.Application.UseCases.Handlers
             user.PasswordHash = _passwordHashingService.HashPassword(request.UserPasswordDto.NewPassword);
 
             await _unitOfWork.UserRepository.UpdateAsync(user, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success();
         }

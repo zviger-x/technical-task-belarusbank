@@ -26,5 +26,12 @@ namespace Shared.Abstractions.UnitOfWork
         /// <param name="token">Cancellation token to cancel the operation if needed.</param>
         /// <returns>An object that can be returned within a transaction</returns>
         Task<T> InvokeWithTransactionAsync<T>(Func<CancellationToken, Task<T>> action, CancellationToken token = default);
+
+        /// <summary>
+        /// Asynchronously saves all changes made in this unit of work to the database.
+        /// </summary>
+        /// <param name="token">Cancellation token to cancel the operation if needed.</param>
+        /// <returns>A task that represents the asynchronous save operation.</returns>
+        Task SaveChangesAsync(CancellationToken cancellationToken);
     }
 }

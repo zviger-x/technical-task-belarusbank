@@ -21,6 +21,7 @@ namespace Users.Application.UseCases.Handlers
                 return Result.Failure(UserErrors.UserToDeleteNotFound);
 
             await _unitOfWork.UserRepository.DeleteAsync(entity, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success();
         }

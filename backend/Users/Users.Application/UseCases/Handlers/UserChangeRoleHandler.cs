@@ -23,6 +23,7 @@ namespace Users.Application.UseCases.Handlers
             entity.Role = request.UserRole;
 
             await _unitOfWork.UserRepository.UpdateAsync(entity, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success();
         }

@@ -23,6 +23,7 @@ namespace Users.Application.UseCases.Handlers
             entity.IsBlocked = request.IsBlocked;
 
             await _unitOfWork.UserRepository.UpdateAsync(entity, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success();
         }

@@ -162,6 +162,8 @@ namespace Users.Application.UseCases.Handlers
             {
                 await _unitOfWork.RefreshTokenRepository.CreateAsync(refreshToken, cancellationToken);
             }
+
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
     }
 }

@@ -56,7 +56,6 @@ namespace Users.Infrastructure.UnitOfWork
             {
                 var result = await action(token);
 
-                await _context.SaveChangesAsync(token);
                 await transaction.CommitAsync(token);
 
                 return result;
@@ -66,6 +65,11 @@ namespace Users.Infrastructure.UnitOfWork
                 await transaction.RollbackAsync(token);
                 throw;
             }
+        }
+
+        public Task SaveChangesAsync(CancellationToken cancellationToken)
+        {
+            return _context.SaveChangesAsync();
         }
 
         public virtual void Dispose()

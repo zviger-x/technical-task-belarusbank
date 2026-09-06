@@ -41,6 +41,7 @@ namespace Users.Application.UseCases.Handlers
             user.PasswordHash = _passwordHashingService.HashPassword(request.User.Password);
 
             await _unitOfWork.UserRepository.CreateAsync(user, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success(user.Id);
         }

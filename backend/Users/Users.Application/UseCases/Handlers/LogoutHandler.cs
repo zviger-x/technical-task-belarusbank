@@ -23,6 +23,7 @@ namespace Users.Application.UseCases.Handlers
                 return Result.Success();
 
             await _unitOfWork.RefreshTokenRepository.DeleteAsync(refreshToken, cancellationToken);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success();
         }

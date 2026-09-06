@@ -7,7 +7,7 @@ namespace Shared.Abstractions.Repositories
         where T : class, IEntity
     {
         /// <summary>
-        /// Creates an entity and automatically saves it to the database.
+        /// Creates an entity.
         /// </summary>
         /// <param name="entity">Entity to create.</param>
         /// <param name="token">Cancellation token to cancel the operation if needed.</param>
@@ -15,35 +15,35 @@ namespace Shared.Abstractions.Repositories
         Task<Guid> CreateAsync(T entity, CancellationToken token = default);
 
         /// <summary>
-        /// Creates multiple entities and automatically saves them to the database.
+        /// Creates multiple entities.
         /// </summary>
         /// <param name="entities">Entities to create.</param>
         /// <param name="token">Cancellation token to cancel the operation if needed.</param>
         Task CreateManyAsync(IEnumerable<T> entities, CancellationToken token = default);
 
         /// <summary>
-        /// Updates an entity and automatically saves the changes to the database.
+        /// Updates an entity.
         /// </summary>
         /// <param name="entity">Entity to update.</param>
         /// <param name="token">Cancellation token to cancel the operation if needed.</param>
         Task UpdateAsync(T entity, CancellationToken token = default);
 
         /// <summary>
-        /// Updates multiple entities and automatically saves the changes to the database.
+        /// Updates multiple entities.
         /// </summary>
         /// <param name="entities">Entities to update.</param>
         /// <param name="token">Cancellation token to cancel the operation if needed.</param>
         Task UpdateManyAsync(IEnumerable<T> entities, CancellationToken token = default);
 
         /// <summary>
-        /// Removes an entity and automatically saves the changes to the database.
+        /// Removes an entity.
         /// </summary>
         /// <param name="entity">Entity to delete.</param>
         /// <param name="token">Cancellation token to cancel the operation if needed.</param>
         Task DeleteAsync(T entity, CancellationToken token = default);
 
         /// <summary>
-        /// Removes multiple entities and automatically saves the changes to the database.
+        /// Removes multiple entities.
         /// </summary>
         /// <param name="entities">Entities to delete.</param>
         /// <param name="token">Cancellation token to cancel the operation if needed.</param>

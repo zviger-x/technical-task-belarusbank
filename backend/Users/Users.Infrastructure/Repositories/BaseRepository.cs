@@ -20,34 +20,31 @@ namespace Users.Infrastructure.Repositories
         public virtual async Task<Guid> CreateAsync(T entity, CancellationToken token = default)
         {
             await _context.AddAsync(entity, token);
-            await _context.SaveChangesAsync(token);
 
             DetachEntity(entity);
 
             return entity.Id;
         }
 
-        public virtual async Task UpdateAsync(T entity, CancellationToken token = default)
+        public virtual Task UpdateAsync(T entity, CancellationToken token = default)
         {
             _context.Update(entity);
-            await _context.SaveChangesAsync(token);
 
             DetachEntity(entity);
+
+            return Task.CompletedTask;
         }
 
-        public virtual async Task DeleteAsync(T entity, CancellationToken token = default)
+        public virtual Task DeleteAsync(T entity, CancellationToken token = default)
         {
             _context.Set<T>().Remove(entity);
-            await _context.SaveChangesAsync(token);
+
+            return Task.CompletedTask;
         }
 
-        public virtual async Task<T> GetByIdAsync(Guid id, CancellationToken token = default)
+        public virtual Task<T> GetByIdAsync(Guid id, CancellationToken token = default)
         {
-            var entity = await _context.Set<T>()
-                .AsNoTracking()
-                .FirstOrDefaultAsync(e => e.Id == id, token);
-
-            return entity;
+            return _context.Set<T>().AsNoTracking().FirstOrDefaultAsync(e => e.Id == id, token);
         }
 
         public virtual async Task<IEnumerable<T>> GetAllAsync(CancellationToken token = default)
@@ -76,19 +73,19 @@ namespace Users.Infrastructure.Repositories
             };
         }
 
-        public virtual async Task CreateManyAsync(IEnumerable<T> entities, CancellationToken token = default)
+        public virtual Task CreateManyAsync(IEnumerable<T> entities, CancellationToken token = default)
         {
-            await _context.BulkInsertAsync(entities, cancellationToken: token);
+            return _context.BulkInsertAsync(entities, cancellationToken: token);
         }
 
-        public virtual async Task UpdateManyAsync(IEnumerable<T> entities, CancellationToken token = default)
+        public virtual Task UpdateManyAsync(IEnumerable<T> entities, CancellationToken token = default)
         {
-            await _context.BulkUpdateAsync(entities, cancellationToken: token);
+            return _context.BulkUpdateAsync(entities, cancellationToken: token);
         }
 
-        public virtual async Task DeleteManyAsync(IEnumerable<T> entities, CancellationToken token = default)
+        public virtual Task DeleteManyAsync(IEnumerable<T> entities, CancellationToken token = default)
         {
-            await _context.BulkDeleteAsync(entities, cancellationToken: token);
+            return _context.BulkDeleteAsync(entities, cancellationToken: token);
         }
 
         public virtual void Dispose()
