@@ -21,16 +21,12 @@ namespace Users.Infrastructure.Repositories
         {
             await _context.AddAsync(entity, token);
 
-            DetachEntity(entity);
-
             return entity.Id;
         }
 
         public virtual Task UpdateAsync(T entity, CancellationToken token = default)
         {
             _context.Update(entity);
-
-            DetachEntity(entity);
 
             return Task.CompletedTask;
         }
@@ -91,11 +87,6 @@ namespace Users.Infrastructure.Repositories
         public virtual void Dispose()
         {
             _context.Dispose();
-        }
-
-        protected virtual void DetachEntity(T entity)
-        {
-            _context.Entry(entity).State = EntityState.Detached;
         }
     }
 }
