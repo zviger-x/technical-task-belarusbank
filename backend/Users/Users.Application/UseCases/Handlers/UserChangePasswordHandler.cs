@@ -2,7 +2,6 @@
 using FluentValidation;
 using MediatR;
 using Shared.Common.Results;
-using Shared.Enums;
 using Shared.Extensions;
 using Users.Application.Common.Errors;
 using Users.Application.Contracts;
@@ -13,7 +12,6 @@ using Users.Domain;
 
 namespace Users.Application.UseCases.Handlers
 {
-    // TODO: mb reset endpoint?
     public class UserChangePasswordHandler : BaseHandler, IRequestHandler<UserChangePasswordCommand, Result>
     {
         private readonly IValidator<UserChangePasswordCommand> _validator;
@@ -42,7 +40,7 @@ namespace Users.Application.UseCases.Handlers
                 return Result.Failure(UserErrors.UserNotFound);
 
             var isCurrentUser = request.UserContext.Id == user.Id;
-            var isCurrentUserAdmin = request.UserContext.Role == UserRoles.Admin;
+            var isCurrentUserAdmin = request.UserContext.IsAdmin;
 
             if (!isCurrentUser && !isCurrentUserAdmin)
                 return Result.Failure(UserErrors.InsufficientPermissions);

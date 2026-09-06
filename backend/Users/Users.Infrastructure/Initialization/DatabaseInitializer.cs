@@ -8,7 +8,6 @@ namespace Users.Infrastructure.Initialization
 {
     public sealed class DatabaseInitializer
     {
-        // TODO: move to config
         private const string AdminEmail = "admin@gmail.com";
         private const string AdminPassword = "admin";
 
