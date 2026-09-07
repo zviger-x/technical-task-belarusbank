@@ -1,0 +1,20 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "Shared.Grpc.User";
+
+package shared;
+
+// Request: Check user blocking by Guid
+message UserBlockStatusRequest {
+	string user_id = 1;
+}
+
+// Response: user block status
+message UserBlockStatusResponse {
+	bool is_blocked = 1;
+}
+
+// gRPC-service
+service UserService {
+	rpc GetUserBlockStatus (UserBlockStatusRequest) returns (UserBlockStatusResponse);
+}
