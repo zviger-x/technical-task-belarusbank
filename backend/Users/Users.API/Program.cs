@@ -1,13 +1,8 @@
 using Scalar.AspNetCore;
-using Shared.Configuration;
 using Shared.Extensions;
 using Shared.Middlewares;
 using System.Reflection;
-using Users.API.Configuration;
 using Users.API.Extensions;
-using Users.Application.UnitOfWork;
-using Users.Infrastructure.Initialization;
-using Users.Infrastructure.UnitOfWork;
 
 namespace Users.API
 {
@@ -17,41 +12,17 @@ namespace Users.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-            var services = builder.Services;
-            var configuration = builder.Configuration;
-            var logging = builder.Logging;
-
             // Add logging
-            logging.ConfigureLogger(
+            builder.Logging.ConfigureLogger(
                 microserviceName: Assembly.GetExecutingAssembly().GetName().Name);
 
             // Add configs
-            configuration.SetBasePath(Directory.GetCurrentDirectory())
+            builder.Configuration.SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false)
                 .AddEnvironmentVariables();
-            var sqlConfig = services.ConfigureAndReceive<SqlServerConfig>(configuration, "SqlServerConfig");
-            var jwtConfig = services.ConfigureAndReceive<JwtTokenConfig>(configuration, "Jwt");
 
-            // Infrastructure
-            services.AddUserDbContext(sqlConfig);
-            services.AddRepositories();
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped<DatabaseInitializer>();
-
-            // Application
-            services.AddAutoMapper(_ => { }, Assembly.Load("Users.Application"));
-            services.AddValidators();
-            services.AddServices();
-            services.AddUseCases();
-
-            // JWT
-            services.AddJwtAuthentication(jwtConfig);
-            services.AddAuthorization();
-
-            // API
-            services.AddControllers();
-            services.AddScalar();
+            // Add application services
+            builder.Services.AddCompositionRoot(builder.Configuration);
 
             var app = builder.Build();
 
@@ -59,12 +30,7 @@ namespace Users.API
             app.UseMiddleware<ExceptionHandlingMiddleware>();
 
             // Initializing DB
-            using (var scope = app.Services.CreateScope())
-            {
-                await scope.ServiceProvider
-                    .GetRequiredService<DatabaseInitializer>()
-                    .InitializeAsync();
-            }
+            await app.InitializeDatabaseAsync();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
