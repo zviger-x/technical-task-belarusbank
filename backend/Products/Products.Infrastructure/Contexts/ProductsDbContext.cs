@@ -5,8 +5,8 @@ namespace Products.Infrastructure.Contexts
 {
     public class ProductsDbContext : DbContext
     {
-        public virtual DbSet<Product> Users { get; set; }
-        public virtual DbSet<Category> RefreshTokens { get; set; }
+        public virtual DbSet<Product> Products { get; set; }
+        public virtual DbSet<Category> Categories { get; set; }
 
         public ProductsDbContext(DbContextOptions<ProductsDbContext> options)
             : base(options)

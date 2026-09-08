@@ -1,10 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using Products.API.Configuration;
 using Products.Application.Repositories;
 using Products.Domain;
 using Products.Infrastructure.Contexts;
 using Products.Infrastructure.Repositories;
 using Shared.Abstractions.Repositories;
+using System.Reflection;
 
 namespace Products.API.Extensions
 {
@@ -26,19 +28,13 @@ namespace Products.API.Extensions
 
         public static void AddValidators(this IServiceCollection services)
         {
-            // services.AddValidatorsFromAssembly(Assembly.Load("Users.Application"));
-            // services.AddValidatorsFromAssembly(Assembly.Load("Shared"));
-        }
-
-        public static void AddServices(this IServiceCollection services)
-        {
-            // services.AddScoped<IPasswordHashingService, PasswordHashingService>();
-            // services.AddScoped<ITokenService, TokenService>();
+            services.AddValidatorsFromAssembly(Assembly.Load("Products.Application"));
+            services.AddValidatorsFromAssembly(Assembly.Load("Shared"));
         }
 
         public static void AddUseCases(this IServiceCollection services)
         {
-            // services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.Load("Users.Application")));
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.Load("Products.Application")));
         }
     }
 }

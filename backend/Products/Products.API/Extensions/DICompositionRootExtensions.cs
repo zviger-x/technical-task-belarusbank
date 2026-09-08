@@ -3,6 +3,7 @@ using Products.Application.UnitOfWork;
 using Products.Infrastructure.UnitOfWork;
 using Shared.Configuration;
 using Shared.Extensions;
+using System.Reflection;
 
 namespace Products.API.Extensions
 {
@@ -20,10 +21,9 @@ namespace Products.API.Extensions
             // services.AddScoped<DatabaseInitializer>();
 
             // Application
-            // services.AddAutoMapper(_ => { }, Assembly.Load("Products.Application"));
-            // services.AddValidators();
-            // services.AddServices();
-            // services.AddUseCases();
+            services.AddAutoMapper(_ => { }, Assembly.Load("Products.Application"));
+            services.AddValidators();
+            services.AddUseCases();
 
             // JWT
             services.AddJwtAuthentication(jwtConfig);
