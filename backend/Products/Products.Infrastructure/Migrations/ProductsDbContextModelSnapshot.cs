@@ -37,7 +37,7 @@ namespace Products.Infrastructure.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("RefreshTokens");
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("Products.Domain.Product", b =>
@@ -73,7 +73,7 @@ namespace Products.Infrastructure.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("Products.Domain.Product", b =>

@@ -12,7 +12,7 @@ using Products.Infrastructure.Contexts;
 namespace Products.Infrastructure.Migrations
 {
     [DbContext(typeof(ProductsDbContext))]
-    [Migration("20260907183703_InitialMigration")]
+    [Migration("20260908193930_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -40,7 +40,7 @@ namespace Products.Infrastructure.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("RefreshTokens");
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("Products.Domain.Product", b =>
@@ -76,7 +76,7 @@ namespace Products.Infrastructure.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("Products.Domain.Product", b =>

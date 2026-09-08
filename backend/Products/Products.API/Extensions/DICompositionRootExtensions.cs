@@ -1,5 +1,6 @@
 ﻿using Products.API.Configuration;
 using Products.Application.UnitOfWork;
+using Products.Infrastructure.Initialization;
 using Products.Infrastructure.UnitOfWork;
 using Shared.Configuration;
 using Shared.Extensions;
@@ -15,10 +16,10 @@ namespace Products.API.Extensions
             var jwtConfig = services.ConfigureAndReceive<JwtTokenConfig>(configuration, "Jwt");
 
             // Infrastructure
-            services.AddUserDbContext(sqlConfig);
+            services.AddProductDbContext(sqlConfig);
             services.AddRepositories();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
-            // services.AddScoped<DatabaseInitializer>();
+            services.AddScoped<DatabaseInitializer>();
 
             // Application
             services.AddAutoMapper(_ => { }, Assembly.Load("Products.Application"));

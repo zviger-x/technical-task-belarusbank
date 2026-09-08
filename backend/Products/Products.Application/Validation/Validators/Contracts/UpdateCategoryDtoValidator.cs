@@ -7,9 +7,6 @@ namespace Products.Application.Validation.Validators.Contracts
     {
         public UpdateCategoryDtoValidator()
         {
-            RuleFor(x => x.Id)
-                .NotEmpty();
-
             RuleFor(x => x.Name)
                 .NotEmpty();
         }

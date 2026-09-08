@@ -15,7 +15,7 @@ namespace Products.API.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        public static void AddUserDbContext(this IServiceCollection services, SqlServerConfig sqlConfig)
+        public static void AddProductDbContext(this IServiceCollection services, SqlServerConfig sqlConfig)
         {
             services.AddDbContext<ProductsDbContext>(o => o.UseSqlServer(sqlConfig.ConnectionString));
         }

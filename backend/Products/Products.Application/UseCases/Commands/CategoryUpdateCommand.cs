@@ -5,5 +5,5 @@ using Shared.Common.Results;
 
 namespace Products.Application.UseCases.Commands
 {
-    public record CategoryUpdateCommand(UpdateCategoryDto Category, UserContext UserContext) : IRequest<Result>;
+    public record CategoryUpdateCommand(Guid CategoryId, UpdateCategoryDto Category, UserContext UserContext) : IRequest<Result>;
 }

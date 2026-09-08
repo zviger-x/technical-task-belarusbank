@@ -24,7 +24,7 @@ namespace Products.Application.UseCases.Handlers
             if (isBlocked)
                 return Result.Failure<Guid>(UserErrors.UserBlocked);
 
-            var entity = await _unitOfWork.CategoryRepository.GetByIdAsync(request.Category.Id, cancellationToken);
+            var entity = await _unitOfWork.CategoryRepository.GetByIdAsync(request.CategoryId, cancellationToken);
             if (entity == null)
                 return Result.Failure(CategoryErrors.CategoryNotFound);
 

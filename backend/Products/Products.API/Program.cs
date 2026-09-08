@@ -31,7 +31,7 @@ namespace Products.API
             app.UseMiddleware<ExceptionHandlingMiddleware>();
 
             // Initializing DB
-            // await app.InitializeDatabaseAsync();
+            await app.InitializeDatabaseAsync();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
