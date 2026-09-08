@@ -20,7 +20,7 @@ services:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=SA_passw0rd
     ports:
-      - "1434:1433"
+      - "1435:1433"
     volumes:
       - sql_data:/var/opt/mssql
     healthcheck:
