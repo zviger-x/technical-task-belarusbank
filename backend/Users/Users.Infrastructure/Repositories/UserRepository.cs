@@ -12,10 +12,10 @@ namespace Users.Infrastructure.Repositories
         {
         }
 
-        public async Task<bool> IsUserBlockedAsync(string email, CancellationToken token = default)
+        public async Task<bool> IsUserBlockedAsync(Guid id, CancellationToken token = default)
         {
             return await _context.Users
-                .Where(x => x.Email == email)
+                .Where(x => x.Id == id)
                 .Select(x => x.IsBlocked)
                 .FirstOrDefaultAsync(token);
         }
