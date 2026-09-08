@@ -24,6 +24,7 @@ namespace Products.API.Extensions
             services.AddAutoMapper(_ => { }, Assembly.Load("Products.Application"));
             services.AddValidators();
             services.AddUseCases();
+            services.AddClients();
 
             // JWT
             services.AddJwtAuthentication(jwtConfig);

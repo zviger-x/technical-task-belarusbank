@@ -1,11 +1,14 @@
 ﻿using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Products.API.Configuration;
+using Products.Application.Clients;
 using Products.Application.Repositories;
 using Products.Domain;
 using Products.Infrastructure.Contexts;
+using Products.Infrastructure.Grpc.Clients;
 using Products.Infrastructure.Repositories;
 using Shared.Abstractions.Repositories;
+using Shared.Grpc.User;
 using System.Reflection;
 
 namespace Products.API.Extensions
@@ -35,6 +38,20 @@ namespace Products.API.Extensions
         public static void AddUseCases(this IServiceCollection services)
         {
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.Load("Products.Application")));
+        }
+
+        public static void AddClients(this IServiceCollection services)
+        {
+            services.AddGrpcClient<UserService.UserServiceClient>(o =>
+            {
+                o.Address = new Uri("http://users.api:8080");
+            })
+            .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+            });
+
+            services.AddScoped<IUserClient, UserClient>();
         }
     }
 }
