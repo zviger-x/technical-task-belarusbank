@@ -7,5 +7,6 @@ namespace Products.Application.UnitOfWork
     {
         IProductRepository ProductRepository { get; }
         ICategoryRepository CategoryRepository { get; }
+        IAuditRepository AuditRepository { get; }
     }
 }

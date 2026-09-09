@@ -16,7 +16,6 @@ namespace Products.Infrastructure.Grpc.Clients
         {
             var request = new UserBlockStatusRequest { UserId = id.ToString() };
 
-            // TODO: ADD INTERNAL NETWORK. CURRENTLY DOESNT WORK (500)
             var result = await _userServiceClient.GetUserBlockStatusAsync(request, cancellationToken: cancellationToken);
 
             return result.IsBlocked;

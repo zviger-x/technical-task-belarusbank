@@ -27,6 +27,9 @@ namespace Products.API.Extensions
 
             services.AddScoped<IRepository<Category>, CategoryRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
+
+            services.AddScoped<IRepository<AuditLog>, AuditRepository>();
+            services.AddScoped<IAuditRepository, AuditRepository>();
         }
 
         public static void AddValidators(this IServiceCollection services)

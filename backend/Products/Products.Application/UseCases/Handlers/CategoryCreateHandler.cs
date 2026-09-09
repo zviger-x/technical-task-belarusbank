@@ -2,6 +2,7 @@
 using FluentValidation;
 using MediatR;
 using Products.Application.Clients;
+using Products.Application.Common;
 using Products.Application.Common.Errors;
 using Products.Application.UnitOfWork;
 using Products.Application.UseCases.Commands;
@@ -40,8 +41,16 @@ namespace Products.Application.UseCases.Handlers
 
             var category = _mapper.Map<Category>(request.Category);
 
-            // TODO: Add audit log
             await _unitOfWork.CategoryRepository.CreateAsync(category, cancellationToken);
+
+            var auditLog = new AuditLog
+            {
+                Action = AuditActions.CategoryCreated,
+                UserId = request.UserContext.Id,
+                EntityId = category.Id,
+            };
+            await _unitOfWork.AuditRepository.CreateAsync(auditLog, cancellationToken);
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success(category.Id);

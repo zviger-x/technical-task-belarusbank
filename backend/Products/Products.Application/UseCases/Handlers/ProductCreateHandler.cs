@@ -2,6 +2,7 @@
 using FluentValidation;
 using MediatR;
 using Products.Application.Clients;
+using Products.Application.Common;
 using Products.Application.Common.Errors;
 using Products.Application.UnitOfWork;
 using Products.Application.UseCases.Commands;
@@ -44,8 +45,16 @@ namespace Products.Application.UseCases.Handlers
 
             var product = _mapper.Map<Product>(request.Product);
 
-            // TODO: Add audit log
             await _unitOfWork.ProductRepository.CreateAsync(product, cancellationToken);
+
+            var auditLog = new AuditLog
+            {
+                Action = AuditActions.ProductCreated,
+                UserId = request.UserContext.Id,
+                EntityId = product.Id,
+            };
+            await _unitOfWork.AuditRepository.CreateAsync(auditLog, cancellationToken);
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success(product.Id);

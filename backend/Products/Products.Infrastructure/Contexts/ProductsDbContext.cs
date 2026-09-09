@@ -7,6 +7,7 @@ namespace Products.Infrastructure.Contexts
     {
         public virtual DbSet<Product> Products { get; set; }
         public virtual DbSet<Category> Categories { get; set; }
+        public virtual DbSet<AuditLog> AuditLogs { get; set; }
 
         public ProductsDbContext(DbContextOptions<ProductsDbContext> options)
             : base(options)

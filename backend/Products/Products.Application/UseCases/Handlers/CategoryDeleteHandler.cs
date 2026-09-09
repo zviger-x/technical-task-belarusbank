@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using MediatR;
 using Products.Application.Clients;
+using Products.Application.Common;
 using Products.Application.Common.Errors;
 using Products.Application.UnitOfWork;
 using Products.Application.UseCases.Commands;
+using Products.Domain;
 using Shared.Common.Results;
 
 namespace Products.Application.UseCases.Handlers
@@ -28,8 +30,16 @@ namespace Products.Application.UseCases.Handlers
             if (entity == null)
                 return Result.Failure(CategoryErrors.CategoryToDeleteNotFound);
 
-            // TODO: Add audit log
             await _unitOfWork.CategoryRepository.DeleteAsync(entity, cancellationToken);
+
+            var auditLog = new AuditLog
+            {
+                Action = AuditActions.CategoryDeleted,
+                UserId = request.UserContext.Id,
+                EntityId = request.CategoryId,
+            };
+            await _unitOfWork.AuditRepository.CreateAsync(auditLog, cancellationToken);
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success();
