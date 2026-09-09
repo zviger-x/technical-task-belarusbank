@@ -1,0 +1,44 @@
+services:
+  users.api:
+    container_name: Users.API
+    stdin_open: true
+    tty: true
+    environment:
+      - DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLORING=true
+      - TERM=xterm-256color
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    restart: always
+    networks:
+      - internal-docker-network
+
+  sqlserver:
+    container_name: Users.SQLServer
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=SA_passw0rd
+    volumes:
+      - sql_data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "SA_passw0rd", "-Q", "SELECT 1", "-C"]
+      interval: 5s
+      timeout: 5s 
+      retries: 60 
+      start_period: 10s
+    restart: always
+    networks:
+      - internal-docker-network
+
+networks:
+  internal-docker-network:
+    external: true
+
+volumes:
+  sql_data:
