@@ -38,6 +38,10 @@ namespace Products.Application.UseCases.Handlers
             if (!validationResult.IsValid)
                 return Result.Failure<Guid>(validationResult.ToErrors());
 
+            var categoryExists = await _unitOfWork.CategoryRepository.IsExistsAsync(request.Product.CategoryId, cancellationToken);
+            if (!categoryExists)
+                return Result.Failure<Guid>(CategoryErrors.CategoryNotFound);
+
             var product = _mapper.Map<Product>(request.Product);
 
             // TODO: Add audit log
