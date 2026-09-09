@@ -7,9 +7,6 @@ namespace Users.Application.Validation.Validators.Contracts
     {
         public ChangeUserPasswordDtoValidator()
         {
-            RuleFor(u => u.CurrentPassword)
-                .NotEmpty();
-
             RuleFor(u => u.NewPassword)
                 .NotEmpty();
 

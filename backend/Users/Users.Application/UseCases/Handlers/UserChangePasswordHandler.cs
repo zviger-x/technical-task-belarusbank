@@ -46,8 +46,14 @@ namespace Users.Application.UseCases.Handlers
             if (!isCurrentUser && !isCurrentUserAdmin)
                 return Result.Failure(UserErrors.InsufficientPermissions);
 
-            if (!isCurrentUserAdmin && !IsCurrentPassword(user, request.UserPasswordDto))
-                return Result.Failure(UserErrors.InvalidCurrentPassword);
+            if (isCurrentUser)
+            {
+                if (string.IsNullOrWhiteSpace(request.UserPasswordDto.CurrentPassword))
+                    return Result.Failure(UserErrors.InvalidCurrentPassword);
+
+                if (!IsCurrentPassword(user, request.UserPasswordDto))
+                    return Result.Failure(UserErrors.InvalidCurrentPassword);
+            }
 
             user.PasswordHash = _passwordHashingService.HashPassword(request.UserPasswordDto.NewPassword);
 
