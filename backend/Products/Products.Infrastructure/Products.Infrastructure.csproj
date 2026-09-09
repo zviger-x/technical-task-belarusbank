@@ -7,8 +7,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="EFCore.BulkExtensions" Version="10.0.1" />
+    <PackageReference Include="EntityFramework" Version="6.5.2" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.83.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.83.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="QuestPDF" Version="2026.8.0" />
+  </ItemGroup>
+  
+  <ItemGroup>
     <ProjectReference Include="..\Products.Application\Products.Application.csproj" />
     <ProjectReference Include="..\Products.Domain\Products.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="..\..\Shared\Shared\Grpc\Protos\User.proto" GrpcServices="Client" />
   </ItemGroup>
 
 </Project>

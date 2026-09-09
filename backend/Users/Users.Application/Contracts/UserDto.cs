@@ -9,5 +9,6 @@ namespace Users.Application.Contracts
         public string Surname { get; set; }
         public string Email { get; set; }
         public UserRoles Role { get; set; }
+        public bool IsBlocked { get; set; }
     }
 }

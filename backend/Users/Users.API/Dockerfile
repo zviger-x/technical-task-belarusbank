@@ -10,10 +10,14 @@ EXPOSE 8080
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Users.API/Users.API.csproj", "Users.API/"]
-RUN dotnet restore "./Users.API/Users.API.csproj"
+COPY ["Users/Users.API/Users.API.csproj", "Users/Users.API/"]
+COPY ["Users/Users.Application/Users.Application.csproj", "Users/Users.Application/"]
+COPY ["Users/Users.Infrastructure/Users.Infrastructure.csproj", "Users/Users.Infrastructure/"]
+COPY ["Users/Users.Domain/Users.Domain.csproj", "Users/Users.Domain/"]
+COPY ["Shared/Shared/Shared.csproj", "Shared/Shared/"]
+RUN dotnet restore "Users/Users.API/Users.API.csproj"
 COPY . .
-WORKDIR "/src/Users.API"
+WORKDIR "/src/Users/Users.API"
 RUN dotnet build "./Users.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 # Этот этап используется для публикации проекта службы, который будет скопирован на последний этап

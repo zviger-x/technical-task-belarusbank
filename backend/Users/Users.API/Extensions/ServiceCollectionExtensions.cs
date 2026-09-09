@@ -4,11 +4,11 @@ using Shared.Abstractions.Repositories;
 using System.Reflection;
 using Users.API.Configuration;
 using Users.Application.Repositories;
-using Users.Application.Services;
 using Users.Application.Services.Interfaces;
 using Users.Domain;
 using Users.Infrastructure.Contexts;
 using Users.Infrastructure.Repositories;
+using Users.Infrastructure.Services;
 
 namespace Users.API.Extensions
 {

@@ -8,9 +8,6 @@ namespace Users.Infrastructure.Initialization
 {
     public sealed class DatabaseInitializer
     {
-        private const string AdminEmail = "admin@gmail.com";
-        private const string AdminPassword = "admin";
-
         private readonly UserDbContext _context;
         private readonly IPasswordHashingService _passwordHashingService;
 
@@ -24,23 +21,33 @@ namespace Users.Infrastructure.Initialization
         {
             await _context.Database.MigrateAsync(cancellationToken);
 
-            var adminExists = await _context.Users.AnyAsync(x => x.Email == EF.Parameter(AdminEmail), cancellationToken);
+            await SeedDemoData(cancellationToken);
+        }
 
-            if (adminExists)
-                return;
-
-            var admin = new User
-            {
-                Name = "Admin",
-                Surname = "Admin",
-                Email = AdminEmail,
-                PasswordHash = _passwordHashingService.HashPassword(AdminPassword),
-                Role = UserRoles.Admin
-            };
-
-            _context.Users.Add(admin);
+        private async Task SeedDemoData(CancellationToken cancellationToken)
+        {
+            await TryAddUser(UserRoles.Admin, "admin@gmail.com", "admin", "admin", cancellationToken);
+            await TryAddUser(UserRoles.SuperUser, "super@gmail.com", "super", "super", cancellationToken);
+            await TryAddUser(UserRoles.User, "user@gmail.com", "user", "user", cancellationToken);
 
             await _context.SaveChangesAsync(cancellationToken);
+
+            async Task TryAddUser(UserRoles role, string email, string password, string name, CancellationToken token)
+            {
+                if (await _context.Users.AnyAsync(x => x.Email == EF.Parameter(email), token))
+                    return;
+
+                var user = new User
+                {
+                    Role = role,
+                    Email = email,
+                    PasswordHash = _passwordHashingService.HashPassword(password),
+                    Name = name,
+                    Surname = name,
+                };
+
+                _context.Users.Add(user);
+            }
         }
     }
 }

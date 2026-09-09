@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Scalar.AspNetCore;
 using Shared.Extensions;
 using Shared.Middlewares;
 using System.Reflection;
 using Users.API.Extensions;
+using Users.API.Services;
 
 namespace Users.API
 {
@@ -11,6 +13,13 @@ namespace Users.API
         public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            // 8080 = rest, 8081 = grpc
+            builder.WebHost.ConfigureKestrel(options =>
+            {
+                options.ListenAnyIP(8080, o => { o.Protocols = HttpProtocols.Http1; });
+                options.ListenAnyIP(8081, o => { o.Protocols = HttpProtocols.Http2; });
+            });
 
             // Add logging
             builder.Logging.ConfigureLogger(
@@ -48,6 +57,7 @@ namespace Users.API
             app.UseAuthorization();
 
             app.MapControllers();
+            app.MapGrpcService<UserService>();
 
             app.Run();
         }
