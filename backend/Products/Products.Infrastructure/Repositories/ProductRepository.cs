@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Products.Application.Contracts;
 using Products.Application.Repositories;
 using Products.Domain;
 using Products.Infrastructure.Contexts;
@@ -55,6 +56,54 @@ namespace Products.Infrastructure.Repositories
                 CurrentPage = pageNumber,
                 PageSize = pageSize
             };
+        }
+
+        public async Task<IEnumerable<ProductCatalogItemDto>> GetForCatalogAsync(
+            string name,
+            string description,
+            string generalNote,
+            string specialNote,
+            Guid? categoryId,
+            CancellationToken token = default)
+        {
+            var query = _context.Products
+                .AsNoTracking()
+                .Join(
+                    _context.Categories.AsNoTracking(),
+                    product => product.CategoryId,
+                    category => category.Id,
+                    (product, category) => new
+                    {
+                        Product = product,
+                        CategoryName = category.Name
+                    });
+
+            if (!string.IsNullOrWhiteSpace(name))
+                query = query.Where(x => x.Product.Name.Contains(name));
+
+            if (!string.IsNullOrWhiteSpace(description))
+                query = query.Where(x => x.Product.Description.Contains(description));
+
+            if (!string.IsNullOrWhiteSpace(generalNote))
+                query = query.Where(x => x.Product.GeneralNote.Contains(generalNote));
+
+            if (!string.IsNullOrWhiteSpace(specialNote))
+                query = query.Where(x => x.Product.SpecialNote.Contains(specialNote));
+
+            if (categoryId.HasValue)
+                query = query.Where(x => x.Product.CategoryId == categoryId.Value);
+
+            return await query
+                .Select(x => new ProductCatalogItemDto
+                {
+                    Name = x.Product.Name,
+                    Category = x.CategoryName,
+                    Description = x.Product.Description,
+                    Price = x.Product.Price,
+                    GeneralNote = x.Product.GeneralNote,
+                    SpecialNote = x.Product.SpecialNote
+                })
+                .ToListAsync(token);
         }
     }
 }

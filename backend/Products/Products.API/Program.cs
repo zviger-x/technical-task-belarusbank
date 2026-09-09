@@ -1,5 +1,5 @@
-
 using Products.API.Extensions;
+using QuestPDF.Infrastructure;
 using Scalar.AspNetCore;
 using Shared.Extensions;
 using Shared.Middlewares;
@@ -11,6 +11,8 @@ namespace Products.API
     {
         public static async Task Main(string[] args)
         {
+            QuestPDF.Settings.License = LicenseType.Community;
+
             var builder = WebApplication.CreateBuilder(args);
 
             // Add logging

@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore;
 using Products.API.Configuration;
 using Products.Application.Clients;
 using Products.Application.Repositories;
+using Products.Application.Services.Interfaces;
 using Products.Domain;
 using Products.Infrastructure.Contexts;
 using Products.Infrastructure.Grpc.Clients;
 using Products.Infrastructure.Repositories;
+using Products.Infrastructure.Services;
 using Shared.Abstractions.Repositories;
 using Shared.Grpc.User;
 using System.Reflection;
@@ -36,6 +38,11 @@ namespace Products.API.Extensions
         {
             services.AddValidatorsFromAssembly(Assembly.Load("Products.Application"));
             services.AddValidatorsFromAssembly(Assembly.Load("Shared"));
+        }
+
+        public static void AddServices(this IServiceCollection services)
+        {
+            services.AddScoped<IPdfCatalogGenerator, PdfCatalogGenerator>();
         }
 
         public static void AddUseCases(this IServiceCollection services)

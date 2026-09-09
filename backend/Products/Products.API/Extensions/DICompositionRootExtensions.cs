@@ -24,6 +24,7 @@ namespace Products.API.Extensions
             // Application
             services.AddAutoMapper(_ => { }, Assembly.Load("Products.Application"));
             services.AddValidators();
+            services.AddServices();
             services.AddUseCases();
             services.AddClients();
 

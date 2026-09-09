@@ -72,5 +72,19 @@ namespace Products.API.Controllers
 
             return result.ToHttpResult();
         }
+
+        [Authorize]
+        [HttpGet("catalog")]
+        public async Task<IActionResult> GetCatalog([FromQuery] ProductFilterDto filter, CancellationToken cancellationToken)
+        {
+            var query = new ProductGetCatalogQuery(filter);
+
+            var result = await _mediator.Send(query, cancellationToken);
+
+            if (!result.IsSuccess)
+                return result.ToHttpResult();
+
+            return File(result.Data, "application/pdf", "catalog.pdf");
+        }
     }
 }
