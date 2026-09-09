@@ -8,7 +8,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Users.Application.Services.Interfaces;
 
-namespace Users.Application.Services
+namespace Users.Infrastructure.Services
 {
     public class TokenService : ITokenService
     {
