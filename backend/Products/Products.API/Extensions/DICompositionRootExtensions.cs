@@ -32,6 +32,7 @@ namespace Products.API.Extensions
             services.AddAuthorization();
 
             // API
+            services.AddGrpc();
             services.AddControllers();
             services.AddScalar();
 

@@ -44,7 +44,7 @@ namespace Products.API.Extensions
         {
             services.AddGrpcClient<UserService.UserServiceClient>(o =>
             {
-                o.Address = new Uri("http://users.api:8080");
+                o.Address = new Uri("http://users.api:8081");
             })
             .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
             {
